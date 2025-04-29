@@ -12,9 +12,13 @@ class Logout
      */
     public function __invoke(): void
     {
-        Auth::guard('web')->logout();
+        $guard = Auth::getDefaultDriver();
+        
+        // Only logout the current guard
+        Auth::guard($guard)->logout();
 
-        Session::invalidate();
+        // Regenerate session token instead of invalidating the entire session
+        // This preserves any other guard sessions
         Session::regenerateToken();
     }
 }
