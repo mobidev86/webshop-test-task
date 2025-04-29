@@ -61,6 +61,7 @@ npm run dev
 ## Accessing Admin Panel
 
 Filament admin panel is accessible at:
+(If you have logged in as user, then you need to logout from user then you will see the admin form created in Filament)
 ```
 /admin
 ```
