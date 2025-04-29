@@ -30,11 +30,20 @@ class LoginForm extends Form
     {
         $this->ensureIsNotRateLimited();
 
-        if (! Auth::attempt($this->only(['email', 'password']), $this->remember)) {
+        if (! Auth::guard('web')->attempt($this->only(['email', 'password']), $this->remember)) {
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([
                 'form.email' => trans('auth.failed'),
+            ]);
+        }
+
+        // Ensure the user is not an admin attempting to login via customer form
+        $user = Auth::guard('web')->user();
+        if (!$user || $user->isAdmin()) {
+            Auth::guard('web')->logout();
+            throw ValidationException::withMessages([
+                'form.email' => 'Administrators must use the admin login page.',
             ]);
         }
 

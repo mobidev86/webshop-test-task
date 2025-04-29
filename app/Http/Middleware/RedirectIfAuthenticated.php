@@ -21,6 +21,12 @@ class RedirectIfAuthenticated
 
         foreach ($guards as $guard) {
             if (Auth::guard($guard)->check()) {
+                // If admin is trying to access customer pages
+                if ($guard === 'admin') {
+                    return redirect()->route('filament.admin.pages.dashboard');
+                }
+                
+                // Regular users go to customer dashboard
                 return redirect(RouteServiceProvider::HOME);
             }
         }
