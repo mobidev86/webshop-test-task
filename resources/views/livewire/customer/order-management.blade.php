@@ -1,331 +1,367 @@
-<div class="py-12">
-    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-        <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-            <div class="p-6">
-                <h2 class="text-2xl font-semibold text-gray-800 mb-6">My Orders</h2>
-                
-                <!-- Order Summary Card -->
-                <div class="mb-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
-                    <div class="bg-white border border-gray-200 rounded-lg shadow-sm p-4 flex flex-col">
-                        <span class="text-sm font-medium text-gray-500">Total Orders</span>
-                        <span class="text-2xl font-bold text-gray-800">{{ $totalOrdersCount }}</span>
+<div>
+    <!-- Flash Messages -->
+    <div class="fixed top-4 right-4 z-50 space-y-4">
+        @if(session()->has('success'))
+            <div class="rounded-md bg-green-50 p-4">
+                <div class="flex">
+                    <div class="flex-shrink-0">
+                        <svg class="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clip-rule="evenodd" />
+                        </svg>
                     </div>
-                    
-                    <div class="bg-gray-50 border border-gray-200 rounded-lg shadow-sm p-4 flex flex-col">
-                        <span class="text-sm font-medium text-gray-500">Pending</span>
-                        <span class="text-2xl font-bold text-gray-800">{{ $statusCounts['pending'] ?? 0 }}</span>
-                    </div>
-                    
-                    <div class="bg-blue-50 border border-blue-200 rounded-lg shadow-sm p-4 flex flex-col">
-                        <span class="text-sm font-medium text-blue-500">Processing</span>
-                        <span class="text-2xl font-bold text-blue-800">{{ $statusCounts['processing'] ?? 0 }}</span>
-                    </div>
-                    
-                    <div class="bg-green-50 border border-green-200 rounded-lg shadow-sm p-4 flex flex-col">
-                        <span class="text-sm font-medium text-green-500">Completed</span>
-                        <span class="text-2xl font-bold text-green-800">{{ $statusCounts['completed'] ?? 0 }}</span>
-                    </div>
-                    
-                    <div class="bg-yellow-50 border border-yellow-200 rounded-lg shadow-sm p-4 flex flex-col">
-                        <span class="text-sm font-medium text-yellow-600">Declined</span>
-                        <span class="text-2xl font-bold text-yellow-800">{{ $statusCounts['declined'] ?? 0 }}</span>
-                    </div>
-                    
-                    <div class="bg-red-50 border border-red-200 rounded-lg shadow-sm p-4 flex flex-col">
-                        <span class="text-sm font-medium text-red-500">Cancelled</span>
-                        <span class="text-2xl font-bold text-red-800">{{ $statusCounts['cancelled'] ?? 0 }}</span>
+                    <div class="ml-3">
+                        <h3 class="text-sm font-medium text-green-800">{{ session('success') }}</h3>
                     </div>
                 </div>
-                
-                <div class="mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                    <!-- Search -->
-                    <div class="relative md:w-64">
-                        <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                            <svg class="w-4 h-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
-                            </svg>
+            </div>
+        @endif
+        
+        @if(session()->has('error'))
+            <div class="rounded-md bg-red-50 p-4">
+                <div class="flex">
+                    <div class="flex-shrink-0">
+                        <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                    <div class="ml-3">
+                        <h3 class="text-sm font-medium text-red-800">{{ session('error') }}</h3>
+                    </div>
+                </div>
+            </div>
+        @endif
+    </div>
+
+    <div class="py-12">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="p-6">
+                    <h2 class="text-2xl font-semibold text-gray-800 mb-6">My Orders</h2>
+                    
+                    <!-- Order Summary Card -->
+                    <div class="mb-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
+                        <div class="bg-white border border-gray-200 rounded-lg shadow-sm p-4 flex flex-col">
+                            <span class="text-sm font-medium text-gray-500">Total Orders</span>
+                            <span class="text-2xl font-bold text-gray-800">{{ $totalOrdersCount }}</span>
                         </div>
-                        <input 
-                            wire:model.live.debounce.300ms="search" 
-                            type="search" 
-                            class="block w-full p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500" 
-                            placeholder="Search orders..."
-                        >
+                        
+                        <div class="bg-gray-50 border border-gray-200 rounded-lg shadow-sm p-4 flex flex-col">
+                            <span class="text-sm font-medium text-gray-500">Pending</span>
+                            <span class="text-2xl font-bold text-gray-800">{{ $statusCounts['pending'] ?? 0 }}</span>
+                        </div>
+                        
+                        <div class="bg-blue-50 border border-blue-200 rounded-lg shadow-sm p-4 flex flex-col">
+                            <span class="text-sm font-medium text-blue-500">Processing</span>
+                            <span class="text-2xl font-bold text-blue-800">{{ $statusCounts['processing'] ?? 0 }}</span>
+                        </div>
+                        
+                        <div class="bg-green-50 border border-green-200 rounded-lg shadow-sm p-4 flex flex-col">
+                            <span class="text-sm font-medium text-green-500">Completed</span>
+                            <span class="text-2xl font-bold text-green-800">{{ $statusCounts['completed'] ?? 0 }}</span>
+                        </div>
+                        
+                        <div class="bg-yellow-50 border border-yellow-200 rounded-lg shadow-sm p-4 flex flex-col">
+                            <span class="text-sm font-medium text-yellow-600">Declined</span>
+                            <span class="text-2xl font-bold text-yellow-800">{{ $statusCounts['declined'] ?? 0 }}</span>
+                        </div>
+                        
+                        <div class="bg-red-50 border border-red-200 rounded-lg shadow-sm p-4 flex flex-col">
+                            <span class="text-sm font-medium text-red-500">Cancelled</span>
+                            <span class="text-2xl font-bold text-red-800">{{ $statusCounts['cancelled'] ?? 0 }}</span>
+                        </div>
                     </div>
                     
-                    <!-- Status Filter Dropdown with AJAX loading indicator -->
-                    <div class="w-full md:w-auto" style="position: relative;">
-                        <div wire:loading class="absolute inset-0 bg-white bg-opacity-60 flex items-center justify-center z-10">
-                            <svg class="animate-spin h-5 w-5 text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                            </svg>
-                        </div>
-                        <div class="relative inline-block text-left w-full">
-                            <button type="button" 
-                                class="inline-flex w-full justify-between items-center gap-x-1.5 rounded-md bg-white px-3 py-2.5 text-sm font-medium text-gray-900 border border-gray-300 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                                id="status-filter-button"
-                                aria-expanded="true"
-                                aria-haspopup="true"
-                                onclick="toggleStatusDropdown()">
-                                <span class="flex items-center">
-                                    <span class="h-2.5 w-2.5 rounded-full mr-2
-                                        @if($status === '') bg-indigo-500
-                                        @elseif($status === 'pending') bg-gray-500
-                                        @elseif($status === 'processing') bg-blue-500
-                                        @elseif($status === 'completed') bg-green-500
-                                        @elseif($status === 'declined') bg-yellow-500
-                                        @elseif($status === 'cancelled') bg-red-500
-                                        @endif
-                                    "></span>
-                                    @if($status === '')
-                                        All Statuses ({{ $totalOrdersCount }})
-                                    @else
-                                        {{ ucfirst($status) }} ({{ $statusCounts[$status] ?? 0 }})
-                                    @endif
-                                </span>
-                                <svg class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                                    <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
+                    <div class="mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                        <!-- Search -->
+                        <div class="relative md:w-64">
+                            <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                                <svg class="w-4 h-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
                                 </svg>
-                            </button>
+                            </div>
+                            <input 
+                                wire:model.live.debounce.300ms="search" 
+                                type="search" 
+                                class="block w-full p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500" 
+                                placeholder="Search orders..."
+                            >
                         </div>
-                        <div class="absolute z-50 mt-2 w-auto origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none hidden"
-                            id="status-filter-dropdown" style="min-width: 200px; right: 0;">
-                            <div class="py-1">
-                                <a wire:click="setStatus('')" 
-                                    href="javascript:void(0)" 
-                                    class="flex items-center justify-between px-4 py-2 text-sm hover:bg-gray-100 {{ $status === '' ? 'bg-gray-100 text-indigo-600 font-medium' : 'text-gray-700' }}"
-                                    onclick="document.getElementById('status-filter-dropdown').classList.add('hidden')">
+                        
+                        <!-- Status Filter Dropdown with AJAX loading indicator -->
+                        <div class="w-full md:w-auto" style="position: relative;">
+                            <div wire:loading class="absolute inset-0 bg-white bg-opacity-60 flex items-center justify-center z-10">
+                                <svg class="animate-spin h-5 w-5 text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                            </div>
+                            <div class="relative inline-block text-left w-full">
+                                <button type="button" 
+                                    class="inline-flex w-full justify-between items-center gap-x-1.5 rounded-md bg-white px-3 py-2.5 text-sm font-medium text-gray-900 border border-gray-300 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                    id="status-filter-button"
+                                    aria-expanded="true"
+                                    aria-haspopup="true"
+                                    onclick="toggleStatusDropdown()">
                                     <span class="flex items-center">
-                                        <span class="h-2 w-2 rounded-full bg-indigo-500 mr-2"></span>
-                                        All Statuses
+                                        <span class="h-2.5 w-2.5 rounded-full mr-2
+                                            @if($status === '') bg-indigo-500
+                                            @elseif($status === 'pending') bg-gray-500
+                                            @elseif($status === 'processing') bg-blue-500
+                                            @elseif($status === 'completed') bg-green-500
+                                            @elseif($status === 'declined') bg-yellow-500
+                                            @elseif($status === 'cancelled') bg-red-500
+                                            @endif
+                                        "></span>
+                                        @if($status === '')
+                                            All Statuses ({{ $totalOrdersCount }})
+                                        @else
+                                            {{ ucfirst($status) }} ({{ $statusCounts[$status] ?? 0 }})
+                                        @endif
                                     </span>
-                                    <span class="text-xs text-gray-500">{{ $totalOrdersCount }}</span>
-                                </a>
-                                <a wire:click="setStatus('pending')" 
-                                    href="javascript:void(0)" 
-                                    class="flex items-center justify-between px-4 py-2 text-sm hover:bg-gray-100 {{ $status === 'pending' ? 'bg-gray-100 text-gray-800 font-medium' : 'text-gray-700' }}"
-                                    onclick="document.getElementById('status-filter-dropdown').classList.add('hidden')">
-                                    <span class="flex items-center">
-                                        <span class="h-2 w-2 rounded-full bg-gray-500 mr-2"></span>
-                                        Pending
-                                    </span>
-                                    <span class="text-xs text-gray-500">{{ $statusCounts['pending'] ?? 0 }}</span>
-                                </a>
-                                <a wire:click="setStatus('processing')" 
-                                    href="javascript:void(0)" 
-                                    class="flex items-center justify-between px-4 py-2 text-sm hover:bg-gray-100 {{ $status === 'processing' ? 'bg-gray-100 text-blue-600 font-medium' : 'text-gray-700' }}"
-                                    onclick="document.getElementById('status-filter-dropdown').classList.add('hidden')">
-                                    <span class="flex items-center">
-                                        <span class="h-2 w-2 rounded-full bg-blue-500 mr-2"></span>
-                                        Processing
-                                    </span>
-                                    <span class="text-xs text-gray-500">{{ $statusCounts['processing'] ?? 0 }}</span>
-                                </a>
-                                <a wire:click="setStatus('completed')" 
-                                    href="javascript:void(0)" 
-                                    class="flex items-center justify-between px-4 py-2 text-sm hover:bg-gray-100 {{ $status === 'completed' ? 'bg-gray-100 text-green-600 font-medium' : 'text-gray-700' }}"
-                                    onclick="document.getElementById('status-filter-dropdown').classList.add('hidden')">
-                                    <span class="flex items-center">
-                                        <span class="h-2 w-2 rounded-full bg-green-500 mr-2"></span>
-                                        Completed
-                                    </span>
-                                    <span class="text-xs text-gray-500">{{ $statusCounts['completed'] ?? 0 }}</span>
-                                </a>
-                                <a wire:click="setStatus('declined')" 
-                                    href="javascript:void(0)" 
-                                    class="flex items-center justify-between px-4 py-2 text-sm hover:bg-gray-100 {{ $status === 'declined' ? 'bg-gray-100 text-yellow-600 font-medium' : 'text-gray-700' }}"
-                                    onclick="document.getElementById('status-filter-dropdown').classList.add('hidden')">
-                                    <span class="flex items-center">
-                                        <span class="h-2 w-2 rounded-full bg-yellow-500 mr-2"></span>
-                                        Declined
-                                    </span>
-                                    <span class="text-xs text-gray-500">{{ $statusCounts['declined'] ?? 0 }}</span>
-                                </a>
-                                <a wire:click="setStatus('cancelled')" 
-                                    href="javascript:void(0)" 
-                                    class="flex items-center justify-between px-4 py-2 text-sm hover:bg-gray-100 {{ $status === 'cancelled' ? 'bg-gray-100 text-red-600 font-medium' : 'text-gray-700' }}"
-                                    onclick="document.getElementById('status-filter-dropdown').classList.add('hidden')">
-                                    <span class="flex items-center">
-                                        <span class="h-2 w-2 rounded-full bg-red-500 mr-2"></span>
-                                        Cancelled
-                                    </span>
-                                    <span class="text-xs text-gray-500">{{ $statusCounts['cancelled'] ?? 0 }}</span>
-                                </a>
+                                    <svg class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                        <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
+                                    </svg>
+                                </button>
+                            </div>
+                            <div class="absolute z-50 mt-2 w-auto origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none hidden"
+                                id="status-filter-dropdown" style="min-width: 200px; right: 0;">
+                                <div class="py-1">
+                                    <a wire:click="setStatus('')" 
+                                        href="javascript:void(0)" 
+                                        class="flex items-center justify-between px-4 py-2 text-sm hover:bg-gray-100 {{ $status === '' ? 'bg-gray-100 text-indigo-600 font-medium' : 'text-gray-700' }}"
+                                        onclick="document.getElementById('status-filter-dropdown').classList.add('hidden')">
+                                        <span class="flex items-center">
+                                            <span class="h-2 w-2 rounded-full bg-indigo-500 mr-2"></span>
+                                            All Statuses
+                                        </span>
+                                        <span class="text-xs text-gray-500">{{ $totalOrdersCount }}</span>
+                                    </a>
+                                    <a wire:click="setStatus('pending')" 
+                                        href="javascript:void(0)" 
+                                        class="flex items-center justify-between px-4 py-2 text-sm hover:bg-gray-100 {{ $status === 'pending' ? 'bg-gray-100 text-gray-800 font-medium' : 'text-gray-700' }}"
+                                        onclick="document.getElementById('status-filter-dropdown').classList.add('hidden')">
+                                        <span class="flex items-center">
+                                            <span class="h-2 w-2 rounded-full bg-gray-500 mr-2"></span>
+                                            Pending
+                                        </span>
+                                        <span class="text-xs text-gray-500">{{ $statusCounts['pending'] ?? 0 }}</span>
+                                    </a>
+                                    <a wire:click="setStatus('processing')" 
+                                        href="javascript:void(0)" 
+                                        class="flex items-center justify-between px-4 py-2 text-sm hover:bg-gray-100 {{ $status === 'processing' ? 'bg-gray-100 text-blue-600 font-medium' : 'text-gray-700' }}"
+                                        onclick="document.getElementById('status-filter-dropdown').classList.add('hidden')">
+                                        <span class="flex items-center">
+                                            <span class="h-2 w-2 rounded-full bg-blue-500 mr-2"></span>
+                                            Processing
+                                        </span>
+                                        <span class="text-xs text-gray-500">{{ $statusCounts['processing'] ?? 0 }}</span>
+                                    </a>
+                                    <a wire:click="setStatus('completed')" 
+                                        href="javascript:void(0)" 
+                                        class="flex items-center justify-between px-4 py-2 text-sm hover:bg-gray-100 {{ $status === 'completed' ? 'bg-gray-100 text-green-600 font-medium' : 'text-gray-700' }}"
+                                        onclick="document.getElementById('status-filter-dropdown').classList.add('hidden')">
+                                        <span class="flex items-center">
+                                            <span class="h-2 w-2 rounded-full bg-green-500 mr-2"></span>
+                                            Completed
+                                        </span>
+                                        <span class="text-xs text-gray-500">{{ $statusCounts['completed'] ?? 0 }}</span>
+                                    </a>
+                                    <a wire:click="setStatus('declined')" 
+                                        href="javascript:void(0)" 
+                                        class="flex items-center justify-between px-4 py-2 text-sm hover:bg-gray-100 {{ $status === 'declined' ? 'bg-gray-100 text-yellow-600 font-medium' : 'text-gray-700' }}"
+                                        onclick="document.getElementById('status-filter-dropdown').classList.add('hidden')">
+                                        <span class="flex items-center">
+                                            <span class="h-2 w-2 rounded-full bg-yellow-500 mr-2"></span>
+                                            Declined
+                                        </span>
+                                        <span class="text-xs text-gray-500">{{ $statusCounts['declined'] ?? 0 }}</span>
+                                    </a>
+                                    <a wire:click="setStatus('cancelled')" 
+                                        href="javascript:void(0)" 
+                                        class="flex items-center justify-between px-4 py-2 text-sm hover:bg-gray-100 {{ $status === 'cancelled' ? 'bg-gray-100 text-red-600 font-medium' : 'text-gray-700' }}"
+                                        onclick="document.getElementById('status-filter-dropdown').classList.add('hidden')">
+                                        <span class="flex items-center">
+                                            <span class="h-2 w-2 rounded-full bg-red-500 mr-2"></span>
+                                            Cancelled
+                                        </span>
+                                        <span class="text-xs text-gray-500">{{ $statusCounts['cancelled'] ?? 0 }}</span>
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- Current Status Badge -->
-                <div class="mb-4 flex items-center">
-                    <span class="text-sm text-gray-600 mr-2">Current Filter:</span>
-                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium 
-                        @if($status === '') bg-indigo-100 text-indigo-800
-                        @elseif($status === 'pending') bg-gray-100 text-gray-800
-                        @elseif($status === 'processing') bg-blue-100 text-blue-800
-                        @elseif($status === 'completed') bg-green-100 text-green-800
-                        @elseif($status === 'declined') bg-yellow-100 text-yellow-800
-                        @elseif($status === 'cancelled') bg-red-100 text-red-800
-                        @endif
-                    ">
-                        <span class="h-1.5 w-1.5 rounded-full mr-1
-                            @if($status === '') bg-indigo-500
-                            @elseif($status === 'pending') bg-gray-500
-                            @elseif($status === 'processing') bg-blue-500
-                            @elseif($status === 'completed') bg-green-500
-                            @elseif($status === 'declined') bg-yellow-500
-                            @elseif($status === 'cancelled') bg-red-500
+                    <!-- Current Status Badge -->
+                    <div class="mb-4 flex items-center">
+                        <span class="text-sm text-gray-600 mr-2">Current Filter:</span>
+                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium 
+                            @if($status === '') bg-indigo-100 text-indigo-800
+                            @elseif($status === 'pending') bg-gray-100 text-gray-800
+                            @elseif($status === 'processing') bg-blue-100 text-blue-800
+                            @elseif($status === 'completed') bg-green-100 text-green-800
+                            @elseif($status === 'declined') bg-yellow-100 text-yellow-800
+                            @elseif($status === 'cancelled') bg-red-100 text-red-800
                             @endif
-                        "></span>
-                        {{ $status === '' ? 'All Statuses' : ucfirst($status) }}
-                    </span>
-                    @if($status !== '')
-                        <button 
-                            wire:click="setStatus('')" 
-                            type="button" 
-                            class="ml-2 text-xs text-gray-500 hover:text-gray-700"
-                        >
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                            </svg>
-                        </button>
-                    @endif
-                </div>
+                        ">
+                            <span class="h-1.5 w-1.5 rounded-full mr-1
+                                @if($status === '') bg-indigo-500
+                                @elseif($status === 'pending') bg-gray-500
+                                @elseif($status === 'processing') bg-blue-500
+                                @elseif($status === 'completed') bg-green-500
+                                @elseif($status === 'declined') bg-yellow-500
+                                @elseif($status === 'cancelled') bg-red-500
+                                @endif
+                            "></span>
+                            {{ $status === '' ? 'All Statuses' : ucfirst($status) }}
+                        </span>
+                        @if($status !== '')
+                            <button 
+                                wire:click="setStatus('')" 
+                                type="button" 
+                                class="ml-2 text-xs text-gray-500 hover:text-gray-700"
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </button>
+                        @endif
+                    </div>
 
-                <!-- Orders Table -->
-                <div class="overflow-x-auto" wire:loading.class="opacity-50">
-                    <table class="min-w-full divide-y divide-gray-200">
-                        <thead class="bg-gray-50">
-                            <tr>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer" wire:click="sortBy('order_number')">
-                                    <div class="flex items-center">
-                                        Order Number
-                                        @if($sort === 'order_number')
-                                            <svg class="w-4 h-4 ml-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                @if($sortDirection === 'asc')
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" />
-                                                @else
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                                                @endif
-                                            </svg>
-                                        @endif
-                                    </div>
-                                </th>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer" wire:click="sortBy('created_at')">
-                                    <div class="flex items-center">
-                                        Date
-                                        @if($sort === 'created_at')
-                                            <svg class="w-4 h-4 ml-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                @if($sortDirection === 'asc')
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" />
-                                                @else
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                                                @endif
-                                            </svg>
-                                        @endif
-                                    </div>
-                                </th>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Status
-                                </th>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Items
-                                </th>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer" wire:click="sortBy('total_amount')">
-                                    <div class="flex items-center">
-                                        Total
-                                        @if($sort === 'total_amount')
-                                            <svg class="w-4 h-4 ml-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                @if($sortDirection === 'asc')
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" />
-                                                @else
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                                                @endif
-                                            </svg>
-                                        @endif
-                                    </div>
-                                </th>
-                                <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Details
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody class="bg-white divide-y divide-gray-200">
-                            @forelse($orders as $order)
+                    <!-- Orders Table -->
+                    <div class="overflow-x-auto" wire:loading.class="opacity-50">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
                                 <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                        {{ $order->order_number }}
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                        {{ $order->created_at->format('M d, Y') }}
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                            @if($order->status === 'pending') bg-gray-100 text-gray-800
-                                            @elseif($order->status === 'processing') bg-blue-100 text-blue-800
-                                            @elseif($order->status === 'completed') bg-green-100 text-green-800
-                                            @elseif($order->status === 'declined') bg-yellow-100 text-yellow-800
-                                            @elseif($order->status === 'cancelled') bg-red-100 text-red-800
-                                            @endif
-                                        ">
-                                            {{ ucfirst($order->status) }}
-                                        </span>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                        {{ $order->itemsCount() }}
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                        ${{ number_format($order->total_amount, 2) }}
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                        <div class="flex justify-end space-x-3">
-                                            <a href="{{ route('customer.order.detail', $order->id) }}" class="inline-flex items-center px-3 py-1.5 bg-indigo-100 border border-transparent rounded-md font-medium text-xs text-indigo-800 hover:bg-indigo-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer" wire:click="sortBy('order_number')">
+                                        <div class="flex items-center">
+                                            Order Number
+                                            @if($sort === 'order_number')
+                                                <svg class="w-4 h-4 ml-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    @if($sortDirection === 'asc')
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" />
+                                                    @else
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                                    @endif
                                                 </svg>
-                                                View Details
-                                            </a>
-                                            
-                                            @if($order->canBeCancelled())
-                                                <button 
-                                                    wire:click="confirmCancel({{ $order->id }})" 
-                                                    type="button" 
-                                                    class="inline-flex items-center px-3 py-1.5 bg-red-100 border border-transparent rounded-md font-medium text-xs text-red-800 hover:bg-red-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
-                                                >
-                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                                                    </svg>
-                                                    Cancel
-                                                </button>
                                             @endif
                                         </div>
-                                    </td>
+                                    </th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer" wire:click="sortBy('created_at')">
+                                        <div class="flex items-center">
+                                            Date
+                                            @if($sort === 'created_at')
+                                                <svg class="w-4 h-4 ml-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    @if($sortDirection === 'asc')
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" />
+                                                    @else
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                                    @endif
+                                                </svg>
+                                            @endif
+                                        </div>
+                                    </th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Status
+                                    </th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Items
+                                    </th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer" wire:click="sortBy('total_amount')">
+                                        <div class="flex items-center">
+                                            Total
+                                            @if($sort === 'total_amount')
+                                                <svg class="w-4 h-4 ml-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    @if($sortDirection === 'asc')
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" />
+                                                    @else
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                                    @endif
+                                                </svg>
+                                            @endif
+                                        </div>
+                                    </th>
+                                    <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Details
+                                    </th>
                                 </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="6" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
-                                        No orders found
-                                    </td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                </div>
-                
-                <!-- Pagination -->
-                <div class="mt-4">
-                    {{ $orders->links() }}
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200">
+                                @forelse($orders as $order)
+                                    <tr>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                            {{ $order->order_number }}
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            {{ $order->created_at->format('M d, Y') }}
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
+                                                @if($order->status === 'pending') bg-gray-100 text-gray-800
+                                                @elseif($order->status === 'processing') bg-blue-100 text-blue-800
+                                                @elseif($order->status === 'completed') bg-green-100 text-green-800
+                                                @elseif($order->status === 'declined') bg-yellow-100 text-yellow-800
+                                                @elseif($order->status === 'cancelled') bg-red-100 text-red-800
+                                                @endif
+                                            ">
+                                                {{ ucfirst($order->status) }}
+                                            </span>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            {{ $order->itemsCount() }}
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            ${{ number_format($order->total_amount, 2) }}
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                            <div class="flex justify-end space-x-3">
+                                                <a href="{{ route('customer.order.detail', $order->id) }}" class="inline-flex items-center px-3 py-1.5 bg-indigo-100 border border-transparent rounded-md font-medium text-xs text-indigo-800 hover:bg-indigo-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                                    </svg>
+                                                    View Details
+                                                </a>
+                                                
+                                                @if($order->canBeCancelled())
+                                                    <button 
+                                                        wire:click="confirmCancel({{ $order->id }})" 
+                                                        type="button" 
+                                                        class="inline-flex items-center px-3 py-1.5 bg-red-100 border border-transparent rounded-md font-medium text-xs text-red-800 hover:bg-red-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                                                    >
+                                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                                        </svg>
+                                                        Cancel
+                                                    </button>
+                                                @endif
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="6" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
+                                            No orders found
+                                        </td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <!-- Pagination -->
+                    <div class="mt-4">
+                        {{ $orders->links() }}
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
-<!-- Cancel Order Modal -->
-@if($showCancelConfirmation)
-    <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity flex items-center justify-center z-50">
+    <!-- Cancel Order Modal -->
+    <div x-data="{ show: @entangle('showCancelConfirmation') }" 
+         x-show="show"
+         x-cloak
+         class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity flex items-center justify-center z-50">
         <div class="bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:max-w-lg sm:w-full">
             <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                 <div class="sm:flex sm:items-start">
@@ -362,7 +398,7 @@
             </div>
         </div>
     </div>
-@endif
+</div>
 
 <script>
     function toggleStatusDropdown() {

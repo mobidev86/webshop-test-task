@@ -35,7 +35,11 @@ php artisan key:generate
 ```
 7. Run database migrations:
 ```bash
-php artisan migrate
+php artisan migrate 
+```
+7.1 If you want to seed the data
+```bash
+php artisan db:seed
 ```
 8. Build assets:
 ```bash
